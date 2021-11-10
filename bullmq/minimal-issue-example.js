@@ -1,9 +1,8 @@
 const http = require('http');
 const { RateLimiterRedis } = require('rate-limiter-flexible');
 const { createClient } = require('redis');
-const Queue = require('bull');
+const { Queue, Worker, QueueScheduler } = require('bullmq');
 const { delay } = require('../helpers');
-const { shuffle } = require('../helpers');
 
 const ID = Math.floor(Math.random() * 100000000000);
 
@@ -16,36 +15,36 @@ const handleJob = async (job) => {
     try {
         await limiter.consume(ID);
     } catch (e) {
-        console.error('Error', job.id, e);
+        console.error('Error', job.id, delayTime, e);
         throw e;
     }
-    console.log('Process job ended', job.id, job.name);
+    console.log('Process job ended', job.id, delayTime, job.name);
     return job.id;
 };
 
-const queue = new Queue('test-queue-bull-1', {
+const queue = new Queue('test-queue-3');
+const worker = new Worker('test-queue-3', async (job) => handleJob(job), {
+    concurrency: 4, // = limiter.max
     limiter: {
-        max: 3,
-        duration: 3000
+        max: 4,
+        duration: 2000
     }
 });
-queue.process(3, async (job) => handleJob(job));
-
+const scheduler = new QueueScheduler('test-queue-3');
 const limiter = new RateLimiterRedis({
-    points: 3,
-    duration: 3,
-    keyPrefix: 'rate-limit:test-bull-2',
+    points: 4,
+    duration: 2000,
+    keyPrefix: 'rate-limit:test-3',
     storeClient: createClient({ host: 'localhost', port: 6379 })
 });
 
 http.createServer()
     .listen(8125)
     .on('listening', async () => {
-        const genArray = (n, mapFn) => new Array(n).fill(null).map(mapFn);
         await Promise.all(
-            shuffle([
-                ...genArray(12, () => ({ name: 'task-one', data: { f: 1 } })),
-                ...genArray(5, () => ({ name: 'task-two', data: { f: 2 } }))
-            ]).map((e) => queue.add(e.data))
+            new Array(12)
+                .fill(null)
+                .map(() => ({ name: 'task-one', data: { f: 1 } }))
+                .map((e) => queue.add(e.name, e.data))
         );
     });
