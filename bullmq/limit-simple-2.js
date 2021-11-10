@@ -1,3 +1,4 @@
+// Q: Rate limit bunch of task with static|random delay before limiter consume
 const http = require('http');
 const { RateLimiterRedis } = require('rate-limiter-flexible');
 const { createClient } = require('redis');
@@ -9,6 +10,7 @@ const ID = Math.floor(Math.random() * 100000000000);
 const handleJob = async (job) => {
     console.log('Process job', job.id, job.name);
 
+    // Delay will simulate different latency to network.
     // await delay(500); // ok
     const delayTime = Math.round(Math.random() * 1000);
     await delay(delayTime); // not ok, sometimes fails
@@ -38,7 +40,8 @@ const limiter = new RateLimiterRedis({
     storeClient: createClient({ host: 'localhost', port: 6379 })
 });
 
-http.createServer()
+require('http')
+    .createServer()
     .listen(8125)
     .on('listening', async () => {
         const genArray = (n, mapFn) => new Array(n).fill(null).map(mapFn);

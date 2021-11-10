@@ -1,3 +1,4 @@
+// Q: Rate limit bunch of task with no delay before limiter consume
 const http = require('http');
 const { RateLimiterRedis } = require('rate-limiter-flexible');
 const { createClient } = require('redis');
