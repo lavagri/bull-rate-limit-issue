@@ -33,7 +33,7 @@ const worker = new Worker('test-queue-3', async (job) => handleJob(job), {
 const scheduler = new QueueScheduler('test-queue-3');
 const limiter = new RateLimiterRedis({
     points: 4,
-    duration: 2000,
+    duration: 2,
     keyPrefix: 'rate-limit:test-3',
     storeClient: createClient({ host: 'localhost', port: 6379 })
 });
@@ -42,7 +42,7 @@ http.createServer()
     .listen(8125)
     .on('listening', async () => {
         await Promise.all(
-            new Array(12)
+            new Array(20)
                 .fill(null)
                 .map(() => ({ name: 'task-one', data: { f: 1 } }))
                 .map((e) => queue.add(e.name, e.data))
