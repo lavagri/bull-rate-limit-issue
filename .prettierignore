@@ -1,0 +1,9 @@
+node_modules
+
+#other
+README.md
+package-lock.json
+/.idea
+
+# testing
+/coverage

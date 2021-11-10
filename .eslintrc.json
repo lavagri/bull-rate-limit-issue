@@ -1,0 +1,46 @@
+{
+    "env": {
+        "es6": true,
+        "node": true,
+        "jest": true
+    },
+    "extends": ["airbnb-base", "plugin:prettier/recommended"],
+    "plugins": ["prettier"],
+    "settings": {},
+    "globals": {
+        "Atomics": "readonly",
+        "SharedArrayBuffer": "readonly"
+    },
+    "parserOptions": {
+        "ecmaVersion": 11,
+        "sourceType": "module"
+    },
+    "ignorePatterns": [
+        "/coverage",
+        "/.idea",
+        "package.json",
+        "package-lock.json"
+    ],
+    "rules": {
+        "prettier/prettier": "error",
+        "no-shadow": 1,
+        "no-restricted-globals": 0,
+        "camelcase": 0, // suppressed
+        "no-unused-vars": 1, // suppressed
+        "no-await-in-loop": 1, // suppressed
+        "no-use-before-define": 1, // suppressed
+        "no-restricted-syntax": 1, // suppressed
+        "class-methods-use-this": 0, // suppressed
+        "global-require": 1, // suppressed
+        "prefer-promise-reject-errors": 1, // suppressed
+        "no-useless-concat": 1, // suppressed
+        "eqeqeq": 1, // suppressed
+        "no-plusplus": 1, // suppressed
+        "prefer-const": 1, // suppressed
+        "no-param-reassign": 1, // suppressed
+        "consistent-return": 1, // suppressed
+        "no-return-await": 1, // suppressed
+        "default-case": 1, // suppressed
+        "array-callback-return": 1 // suppressed
+    }
+}
